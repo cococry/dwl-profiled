@@ -1,0 +1,12 @@
+#pragma once
+
+#define VORTEX_PREFIX     "@prefix@"
+#define VORTEX_LIBDIR     "@libdir@"
+#define VORTEX_BACKEND_DIR "@libdir@/vortex/backends"
+
+#mesondefine VT_HAS_OPENGL
+#mesondefine VT_HAS_VULKAN
+
+#mesondefine VT_HAS_LIBINPUT
+#mesondefine VT_HAS_WAYLAND_INPUT
+#mesondefine VT_HAS_X11_INPUT

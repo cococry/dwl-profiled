@@ -1,0 +1,10 @@
+/build*/
+.cache
+*.json
+subprojects/cglm-*/
+subprojects/packagecache/
+subprojects/libliftoff/
+subprojects/runara/
+subprojects/tracy/
+**/**.log
+subprojects/.wraplock

@@ -1,0 +1,87 @@
+# Copyright (c) 2026 Luca Machiedo
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+dep_gbm = dependency(
+  'gbm',
+  required: true,
+)
+
+dep_drm = dependency(
+  'libdrm',
+  required: true,
+)
+
+dep_seat = dependency(
+  'libseat',
+  required: true,
+)
+
+dep_udev = dependency(
+  'libudev',
+  required: true,
+)
+
+dep_libinput = dependency(
+  'libinput',
+  required: true,
+)
+
+dep_libliftoff = dependency(
+  'libliftoff',
+  version: '>=0.5.0',
+  fallback: 'libliftoff',
+  required: true,
+)
+
+shared_module(
+  'drm-backend',
+  files(
+    'drm_backend.c',
+    'session_drm.c',
+    'props.c',
+    'prime.c',
+    'fb.c',
+    'atomic.c',
+    'legacy.c',
+    'cursor.c',
+    'kms.c',
+    'liftoff_log.c',
+    'gbm_allocator.c',
+  ),
+  dependencies: [
+    dep_gbm,
+    dep_drm,
+    dep_seat,
+    dep_udev,
+    dep_libinput,
+    dep_libliftoff,
+    dep_wayland_server,
+    dep_pixman,
+    dep_runara_headers,
+    dep_profiling_headers,
+  ],
+  include_directories: vortex_inc,
+  install: true,
+  install_dir: join_paths(
+    get_option('libdir'),
+    'vortex',
+    'backends',
+  ),
+)

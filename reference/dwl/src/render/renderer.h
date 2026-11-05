@@ -1,0 +1,110 @@
+/*
+ * Copyright (c) 2026 Luca Machiedo
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+#pragma once
+
+#include "../core/core_types.h"
+#include "../core/util.h"
+#include <sys/types.h>
+#include <wayland-util.h>
+
+struct vt_buffer_t;
+struct vt_dmabuf_attr_t;
+
+enum vt_rendering_backend_t {
+  VT_RENDERING_BACKEND_INVALID = 0,
+  VT_RENDERING_BACKEND_EGL_OPENGL, 
+  VT_RENDERING_BACKEND_VULKAN,
+};
+
+struct vt_renderer_interface_t {
+  bool (*init)(struct vt_backend_t *backend, struct vt_renderer_t *r,
+               void *native_handle);
+  bool (*is_handle_renderable)(struct vt_renderer_t *renderer,
+                               void                 *native_handle);
+  bool (*query_dmabuf_formats)(struct vt_compositor_t *comp,
+                               void *native_handle, struct wl_array *formats);
+  bool (*query_dmabuf_formats_with_renderer)(struct vt_renderer_t *renderer,
+                                             struct wl_array      *formats);
+  /* enumerate importable color-attachment formats and modifiers (we use this
+   * for rendering into output buffers). */
+  bool (*query_render_formats)(struct vt_renderer_t *r,
+                               struct wl_array      *formats);
+  bool (*setup_renderable_output)(struct vt_renderer_t *r,
+                                  struct vt_output_t   *output);
+  bool (*resize_renderable_output)(struct vt_renderer_t *r,
+                                   struct vt_output_t *output, int32_t w,
+                                   int32_t h);
+  bool (*destroy_renderable_output)(struct vt_renderer_t *r,
+                                    struct vt_output_t   *output);
+  bool (*import_buffer)(struct vt_renderer_t *r, struct vt_buffer_t *buf,
+                        const pixman_region32_t *damage);
+  bool (*is_dmabuf_importable)(struct vt_renderer_t          *r,
+                               const struct vt_dmabuf_attr_t *attr);
+  bool (*drop_context)(struct vt_renderer_t *r);
+  // true when acquire fences are waited on and release fences produced
+  bool (*supports_explicit_sync)(struct vt_renderer_t *r);
+  void (*set_vsync)(struct vt_renderer_t *r, bool vsync);
+  void (*clear_color_buffer)(struct vt_renderer_t *r,
+                             struct vt_output_t   *output);
+  void (*set_clear_color)(struct vt_renderer_t *r, struct vt_output_t *output,
+                          uint32_t col);
+  void (*stencil_damage_pass)(struct vt_renderer_t *r,
+                              struct vt_output_t   *output);
+  void (*composite_pass)(struct vt_renderer_t *r, struct vt_output_t *output);
+  void (*begin_scene)(struct vt_renderer_t *r, struct vt_output_t *output);
+  void (*begin_frame)(struct vt_renderer_t *r, struct vt_output_t *output);
+  void (*draw_buffer)(struct vt_renderer_t *r, struct vt_output_t *output,
+                      struct vt_buffer_use_t *use, struct vt_box_t *src_box,
+                      struct vt_box_t *dst_box);
+  void (*draw_surface)(struct vt_renderer_t *r, struct vt_output_t *output,
+                       struct vt_surface_t *surface, struct vt_box_t *src_box,
+                       struct vt_box_t *dst_box);
+  void (*draw_surface_simple)(struct vt_renderer_t *r,
+                              struct vt_output_t   *output,
+                              struct vt_surface_t *surface, float x, float y);
+
+  void (*draw_rect)(struct vt_renderer_t *r, float x, float y, float w, float h,
+                    uint32_t col);
+  void (*end_scene)(struct vt_renderer_t *r, struct vt_output_t *output);
+  void (*end_frame)(struct vt_renderer_t *r, struct vt_output_t *output,
+                    const pixman_box32_t *damaged, int32_t n_damaged);
+  bool (*destroy)(struct vt_renderer_t *r);
+};
+
+struct vt_renderer_t {
+  struct vt_renderer_interface_t impl;
+
+  enum vt_rendering_backend_t rendering_backend;
+  struct vt_compositor_t     *comp;
+  void                       *user_data;
+
+  struct vt_backend_t *backend;
+
+  uint32_t _desired_render_buffer_format;
+  dev_t    device;
+
+  struct wl_list buffer_attachments;
+};
+
+void vt_renderer_implement(struct vt_renderer_t       *renderer,
+                           enum vt_rendering_backend_t backend);
