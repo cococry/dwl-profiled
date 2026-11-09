@@ -133,8 +133,11 @@ wlr_deps = [
 	rt,
 ]
 
+if get_option('profiling_comparison')
+  add_project_arguments('-DWLR_PROFILE_COMPARISON', '-D_POSIX_C_SOURCE=200809L', language: 'c')
+endif
 wlr_install_rpath = ''
-if get_option('profiling')
+if get_option('profiling') or get_option('profiling_comparison')
 	add_languages('cpp', required: true)
 	tracy_dir = get_option('tracy_source')
 	tracy_inc = include_directories(tracy_dir / 'public')
@@ -142,7 +145,7 @@ if get_option('profiling')
 		include_directories: tracy_inc,
 		cpp_args: ['-DTRACY_ENABLE'],
 		dependencies: [dependency('threads'), cc.find_library('dl')],
-		override_options: ['cpp_std=c++17', 'werror=false'],
+		override_options: ['cpp_std=c++17', 'optimization=2', 'werror=false'],
 		install: true,
 	)
 	wlr_install_rpath = '$ORIGIN'

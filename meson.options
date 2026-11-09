@@ -11,4 +11,6 @@ option('tests', type: 'boolean', value: true, description: 'Build tests and benc
 option('icc-profile', type: 'feature', value: 'auto', description: 'Enable support for ICC profiles')
 option('libliftoff', type: 'feature', value: 'auto', description: 'Enable support for libliftoff')
 option('profiling', type: 'boolean', value: false, description: 'Enable Tracy CPU scopes')
-option('tracy_source', type: 'string', value: 'reference/vortex/subprojects/tracy', description: 'Path to the matching Tracy source tree')
+option('tracy_source', type: 'string', value: '../../subprojects/tracy', description: 'Path to the matching Tracy source tree')
+
+option('profiling_comparison', type: 'boolean', value: false, description: 'Only shared comparison-stage CPU scopes; implies profiling')

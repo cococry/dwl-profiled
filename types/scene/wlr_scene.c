@@ -2343,6 +2343,7 @@ bool wlr_scene_output_commit(struct wlr_scene_output *scene_output,
 	if (!wlr_scene_output_needs_frame(scene_output)) {
 		return true;
 	}
+	WLR_PROFILE_COMPARE("compare.frame");
 
 	bool ok = false;
 	struct wlr_output_state state;

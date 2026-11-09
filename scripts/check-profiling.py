@@ -45,7 +45,7 @@ def paths():
     selected |= set(ROOT.glob('backend/*.c'))
     for backend in ('drm', 'wayland', 'x11', 'multi', 'session'):
         selected |= set(ROOT.glob('backend/' + backend + '/*.c'))
-    selected |= {ROOT / 'reference/dwl/dwl' / f for f in ('dwl.c', 'client.h', 'ime.h', 'util.h')}
+    selected |= {ROOT / 'dwl' / f for f in ('dwl.c', 'client.h', 'ime.h', 'util.h')}
     return sorted(selected)
 
 

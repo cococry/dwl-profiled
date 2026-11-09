@@ -601,6 +601,7 @@ static void surface_commit_state(struct wlr_surface *surface,
 static void surface_handle_commit(struct wl_client *client,
 		struct wl_resource *resource) {
 	WLR_PROFILE_SCOPE();
+  WLR_PROFILE_COMPARE("compare.client_commit");
 	struct wlr_surface *surface = wlr_surface_from_resource(resource);
 	surface->handling_commit = true;
 

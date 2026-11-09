@@ -1973,7 +1973,7 @@
     ]
   },
   {
-    "file": "reference/dwl/dwl/client.h",
+    "file": "dwl/client.h",
     "functions": [
       {
         "function": "client_is_x11",
@@ -2082,7 +2082,7 @@
     ]
   },
   {
-    "file": "reference/dwl/dwl/dwl.c",
+    "file": "dwl/dwl.c",
     "functions": [
       {
         "function": "applybounds",
@@ -2599,7 +2599,7 @@
     ]
   },
   {
-    "file": "reference/dwl/dwl/ime.h",
+    "file": "dwl/ime.h",
     "functions": [
       {
         "function": "output_from_wlr_output",
@@ -2720,7 +2720,7 @@
     ]
   },
   {
-    "file": "reference/dwl/dwl/util.h",
+    "file": "dwl/util.h",
     "functions": [
       {
         "function": "die",
